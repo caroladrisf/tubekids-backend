@@ -19,6 +19,7 @@ class CreateProfilesTable extends Migration
             $table->string('username');
             $table->string('pin', 6);
             $table->unsignedInteger('age')->nullable();
+            $table->integer('user_id');
         });
     }
 
