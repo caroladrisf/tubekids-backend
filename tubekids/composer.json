@@ -13,7 +13,8 @@
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
         "sendgrid/sendgrid": "~7",
-        "tymon/jwt-auth": "dev-develop"
+        "tymon/jwt-auth": "dev-develop",
+        "nesbot/carbon": "^1.26.3"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
