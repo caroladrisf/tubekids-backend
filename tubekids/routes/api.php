@@ -18,5 +18,8 @@ Route::post('users', 'UserController@register')->name('register');
 
 Route::middleware(['auth.jwt'])->group(function(){
     Route::delete('users/session', 'UserController@logout')->name('logout');
-
+    Route::post('users/{user}/confirmation-email', 'MailController@sendConfirmationEmail');
+    
 });
+
+Route::get('users/{user}/confirm', 'UserController@confirmEmailAddress');
