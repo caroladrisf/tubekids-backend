@@ -12,9 +12,10 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
+        "nesbot/carbon": "^1.26.3",
         "sendgrid/sendgrid": "~7",
-        "tymon/jwt-auth": "dev-develop",
-        "nesbot/carbon": "^1.26.3"
+        "twilio/sdk": "^5.31",
+        "tymon/jwt-auth": "dev-develop"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

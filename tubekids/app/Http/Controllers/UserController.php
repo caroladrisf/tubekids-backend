@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserRequest;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use JWTAuth;
+use Twilio\Exceptions\TwilioException;
+use Twilio\Rest\Client;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
@@ -32,6 +35,30 @@ class UserController extends Controller
         }
         $user = JWTAuth::user();
         return response()->json(compact('token', 'user'));
+    }
+
+    public function sendSMS(User $user)
+    {
+        if (! $user) {
+            return response()->json(['error'=>'User not found'], 404);
+        }
+        
+        $user->update(['code' => Str::random(6)]);
+        $client = new Client(getenv('ACCOUNT_SID'), getenv('AUTH_TOKEN'));
+
+        try {
+            $client->messages->create(
+                '+' . $user->country . $user->phone,
+                array(
+                    'from' => getenv('TWILIO_NUMBER'),
+                    'body' => 'Your verification code is: ' . $user->code
+                )
+            );
+        } catch(Twilio\Exceptions\TwilioException $e) {
+            return response()->json(['exception' => 'twilio rest exception'], 500);
+        } 
+
+        return ['message' => 'We sent you a SMS with a verification code.'];
     }
 
     /**
@@ -60,8 +87,7 @@ class UserController extends Controller
             $user->fill($request->except('password'));
             $user->fill(['password' => Hash::make($request->input('password'))])->save();
             
-            $token = JWTAuth::fromUser($user);
-            return response()->json(compact('user','token'), 201);
+            return response()->json(compact('user'), 201);
         } else {
             return response()->json(['error'=>'The user can not be created because the age is less than 18'], 403);
         }
