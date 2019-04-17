@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileRequest;
 use App\Profile;
+use App\User;
 use Illuminate\Http\Request;
 use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
 
 class ProfileController extends Controller
 {
@@ -15,9 +15,10 @@ class ProfileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($id)
+    public function index()
     {
-        $profiles = Profile::where('user_id', '=', $id)->get();
+        $user = JWTAuth::parseToken()->authenticate();
+        $profiles = Profile::where('user_id', '=', $user->id)->get();
         return response()->json($profiles, 200);
     }
 
@@ -27,12 +28,12 @@ class ProfileController extends Controller
      * @param  App\Http\Requests\ProfileRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProfileRequest $request, $id)
+    public function store(ProfileRequest $request)
     {
-        $profile = new Profile();
-        $profile->fill($request->all());
-        $profile->fill(['user_id' => $id]);
-        if ($profile->save()) {
+        $user = JWTAuth::parseToken()->authenticate();
+
+        $profile = $user->profiles()->create($request->all());
+        if ($profile) {
             return response()->json($profile, 201);
         }
         return response()->json(['error' => 'There was an error creating the profile'], 500);

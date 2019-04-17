@@ -20,8 +20,8 @@ Route::middleware(['auth.jwt'])->group(function(){
     Route::post('users/{user}/sms', 'UserController@sendSMS');
     Route::delete('users/session', 'UserController@logout')->name('logout');
     
-    Route::get('users/{id}/profiles', 'ProfileController@index');
-    Route::post('users/{id}/profiles', 'ProfileController@store');
+    Route::get('profiles', 'ProfileController@index');
+    Route::post('profiles', 'ProfileController@store');
     Route::get('profiles/{id}', 'ProfileController@show');
     Route::put('profiles/{id}', 'ProfileController@update');
     Route::delete('profiles/{id}', 'ProfileController@destroy');
