@@ -55,4 +55,20 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    /**
+     * Get the playlist record associated with the user.
+     */
+    public function playlist()
+    {
+        return $this->hasOne('App\Playlist');
+    }
+
+    /**
+     * Get the profiles.
+     */
+    public function profiles()
+    {
+        return $this->hasMany('App\Profile');
+    }
 }

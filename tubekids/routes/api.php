@@ -26,6 +26,7 @@ Route::middleware(['auth.jwt'])->group(function(){
     Route::put('profiles/{id}', 'ProfileController@update');
     Route::delete('profiles/{id}', 'ProfileController@destroy');
     
+    Route::get('users/{user_id}/playlist', 'UserController@findOrCreatePlaylist');
 });
 
 Route::post('users/{user}/confirmation-email', 'MailController@sendConfirmationEmail');
