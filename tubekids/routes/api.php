@@ -15,10 +15,13 @@ use Illuminate\Http\Request;
 
 Route::post('users/session', 'UserController@login')->name('login');
 Route::post('users', 'UserController@register')->name('register');
+Route::post('users/{user}/confirmation-email', 'MailController@sendConfirmationEmail');
+Route::get('users/{user}/confirm', 'UserController@confirmEmailAddress');
 
 Route::middleware(['auth.jwt'])->group(function(){
+    Route::delete('users/{user}/session', 'UserController@logout')->name('logout');
     Route::post('users/{user}/sms', 'UserController@sendSMS');
-    Route::delete('users/session', 'UserController@logout')->name('logout');
+    Route::put('users/{user}/code', 'UserController@verifyCode');
     
     Route::get('profiles', 'ProfileController@index');
     Route::post('profiles', 'ProfileController@store');
@@ -35,6 +38,3 @@ Route::middleware(['auth.jwt'])->group(function(){
     Route::delete('videos/{id}', 'VideoController@destroy');
     
 });
-
-Route::post('users/{user}/confirmation-email', 'MailController@sendConfirmationEmail');
-Route::get('users/{user}/confirm', 'UserController@confirmEmailAddress');

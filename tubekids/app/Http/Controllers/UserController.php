@@ -37,18 +37,24 @@ class UserController extends Controller
         return response()->json(compact('token', 'user'));
     }
 
+    /**
+     * Send a SMS with a verification code.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function sendSMS(User $user)
     {
         if (! $user) {
             return response()->json(['error'=>'User not found'], 404);
         }
         
-        $user->update(['code' => Str::random(6)]);
+        $user->update(['code' => random_int(10000, 99999)]);
         $client = new Client(getenv('ACCOUNT_SID'), getenv('AUTH_TOKEN'));
 
         try {
             $client->messages->create(
-                '+' . $user->country . $user->phone,
+                '+' . '506' . $user->phone,
                 array(
                     'from' => getenv('TWILIO_NUMBER'),
                     'body' => 'Your verification code is: ' . $user->code
@@ -58,7 +64,22 @@ class UserController extends Controller
             return response()->json(['exception' => 'twilio rest exception'], 500);
         } 
 
-        return ['message' => 'We sent you a SMS with a verification code.'];
+        return response()->json(['message' => 'We sent you a SMS with a verification code.'], 200);
+    }
+
+    /**
+     * Verify if the code is correct.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verifyCode(Request $request, User $user)
+    {
+        if ($request->input('code') === $user->code) {
+            $user->update(['code' => '']);
+            return response()->json(['message' => 'Phone number verified!'], 200);
+        }
+        return response()->json(['error' => 'Incorrect code'], 403);
     }
 
     /**
@@ -66,7 +87,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout($user)
     {
         JWTAuth::invalidate();
         return response()->json(['message' => 'Successfully logged out']);
@@ -91,22 +112,6 @@ class UserController extends Controller
         } else {
             return response()->json(['error'=>'The user can not be created because the age is less than 18'], 403);
         }
-    }
-
-    public function getAuthenticatedUser()
-    {
-        try {
-            if (! $user = JWTAuth::parseToken()->authenticate()) {
-                return response()->json(['user_not_found'], 404);
-            }
-        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-           return response()->json(['token_expired'], 401);
-        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return response()->json(['token_invalid'], 401);
-        } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
-            return response()->json(['token_absent'], 401);
-        }
-        return response()->json(compact('user'));
     }
 
     /**
