@@ -34,7 +34,7 @@ class ProfileController extends Controller
 
         $profile = $user->profiles()->create($request->all());
         if ($profile) {
-            return response()->json($profile, 201);
+            return response()->json(compact('profile'), 201)->header('Location', "http://localhost:8000/api/profiles/$profile->id");
         }
         return response()->json(['error' => 'There was an error creating the profile'], 500);
     }

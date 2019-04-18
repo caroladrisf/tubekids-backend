@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VideoRequest extends FormRequest
+class UpdateVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,9 @@ class VideoRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
             'type' => 'required|in:Youtube Video,Uploaded Video',
             'url'  => 'required_if:type,Youtube Video|url',
-            'file' => 'required_if:type,Uploaded Video|mimetypes:video/*'
+            'file' => 'required_if:type,Uploaded Video|file'
         ];
     }
 }

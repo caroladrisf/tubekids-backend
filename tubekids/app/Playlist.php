@@ -14,4 +14,12 @@ class Playlist extends Model
      * @var array
      */
     protected $fillable = ['name', 'user_id'];
+
+    /**
+     * Get the videos of the playlist.
+     */
+    public function videos()
+    {
+        return $this->hasMany('App\Video');
+    }
 }
