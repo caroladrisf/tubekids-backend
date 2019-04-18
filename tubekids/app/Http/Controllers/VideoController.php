@@ -19,31 +19,22 @@ class VideoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
         
-        $playlist = Playlist::where('user_id', '=', $user->id)->with('videos')->get();
+        if ($request->query('name')) {
+            $name = '%' . $request->query('name') . '%';
+
+            $playlist = Playlist::where('user_id', '=', $user->id)->get();
+            foreach ($playlist as $p) {
+                $p->videos = Video::where('playlist_id', $p->id)->where('name', 'ilike', $name)->get();
+            }
+
+        } else {
+            $playlist = Playlist::where('user_id', '=', $user->id)->with('videos')->get();
+        }
         
-        return response()->json(compact('playlist'), 200);
-    }
-
-    /**
-     * Return a list of videos that match the name.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function findByName(Request $request)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-
-        $name = '%' . $request->query('name') . '%';
-        
-        $playlist = Playlist::where('user_id', '=', $user->id)
-                    ->with(['videos' => function ($query) {
-                        $query->where('name', 'ilike', $name);
-                    }])->get();
-
         return response()->json(compact('playlist'), 200);
     }
 
@@ -94,6 +85,9 @@ class VideoController extends Controller
     public function show($id)
     {
         $video = Video::find($id);
+        if (! $video) {
+            return response()->json(['error' => 'Video not found'], 404);
+        }
         return response()->json(compact('video'), 200);
     }
 
