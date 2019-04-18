@@ -27,6 +27,13 @@ Route::middleware(['auth.jwt'])->group(function(){
     Route::delete('profiles/{id}', 'ProfileController@destroy');
     
     Route::get('users/{user_id}/playlist', 'UserController@findOrCreatePlaylist');
+
+    Route::get('videos', 'VideoController@index');
+    Route::post('videos', 'VideoController@store');
+    Route::get('videos/{id}', 'VideoController@show');
+    Route::put('videos/{id}', 'VideoController@update');
+    Route::delete('videos/{id}', 'VideoController@destroy');
+    
 });
 
 Route::post('users/{user}/confirmation-email', 'MailController@sendConfirmationEmail');
