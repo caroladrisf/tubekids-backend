@@ -27,11 +27,11 @@ class UserRequest extends FormRequest
             'name' => 'required',
             'lastname' => 'required',
             'birthdate' => 'required|date_format:d/m/Y',
-            'contry' => 'alpha|nullable',
+            'country' => 'numeric|nullable',
             'phone' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string',
-            'confirm_password' => 'same:password',
+            'confirm_password' => 'required|same:password',
         ];
     }
 }
