@@ -25,7 +25,7 @@ class ProfileRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'username' => 'required',
+            'username' => 'required|unique:profiles,username',
             'pin' => 'required|digits:6',
             'age' => 'nullable|integer'
         ];

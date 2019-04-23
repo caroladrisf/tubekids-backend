@@ -26,8 +26,8 @@ class UserRequest extends FormRequest
         return [
             'name' => 'required',
             'lastname' => 'required',
-            'birthdate' => 'required|date_format:d/m/Y',
-            'country' => 'numeric|nullable',
+            'birthdate' => 'required|date_format:Y-m-d',
+            'country' => 'string|nullable',
             'phone' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string',
