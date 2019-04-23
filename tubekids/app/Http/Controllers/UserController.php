@@ -54,7 +54,7 @@ class UserController extends Controller
 
         try {
             $client->messages->create(
-                '+' . '506' . $user->phone,
+                '+506' . $user->phone,
                 array(
                     'from' => getenv('TWILIO_NUMBER'),
                     'body' => 'Your verification code is: ' . $user->code
@@ -87,7 +87,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout($user)
+    public function logout()
     {
         JWTAuth::invalidate();
         return response()->json(['message' => 'Successfully logged out']);
@@ -102,7 +102,7 @@ class UserController extends Controller
     public function register(UserRequest $request)
     {
         // Validate if the user's age is greater than or equal to 18
-        $age = Carbon::createFromFormat('d/m/Y', $request->input('birthdate'))->age;
+        $age = Carbon::createFromFormat('Y-m-d', $request->input('birthdate'))->age;
         if ($age >= 18) {
             $user = new User();
             $user->fill($request->except('password'));
@@ -110,8 +110,15 @@ class UserController extends Controller
             
             return response()->json(compact('user'), 201);
         } else {
-            return response()->json(['error'=>'The user can not be created because the age is less than 18'], 403);
+            $errors = array('birthdate' => ['The user can not be less than 18 years old']);
+            return response()->json(compact('errors'), 403);
         }
+    }
+
+    public function getAuthenticatedUser()
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        return response()->json(compact('user'), 200);
     }
 
     /**
