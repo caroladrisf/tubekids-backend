@@ -29,7 +29,7 @@ class MailController extends Controller
                     font-size: 1.09375rem;
                     line-height: 1.5;
                     border-radius: 0;' 
-                    href='http://localhost:8000/api/users/$user->id/confirm' role='button'>Confirm email address</a>
+                    href='http://localhost:3000/users/$user->id/confirm-email' role='button'>Confirm email address</a>
                 </p>
             </div>"
         );

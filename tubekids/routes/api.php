@@ -19,7 +19,7 @@ Route::post('users/{user}/confirmation-email', 'MailController@sendConfirmationE
 Route::get('users/{user}/confirm', 'UserController@confirmEmailAddress');
 
 Route::middleware(['auth.jwt'])->group(function(){
-    Route::delete('users/{user}/session', 'UserController@logout')->name('logout');
+    Route::delete('users/session', 'UserController@logout')->name('logout');
     Route::post('users/{user}/sms', 'UserController@sendSMS');
     Route::put('users/{user}/code', 'UserController@verifyCode');
     
@@ -29,7 +29,7 @@ Route::middleware(['auth.jwt'])->group(function(){
     Route::put('profiles/{id}', 'ProfileController@update');
     Route::delete('profiles/{id}', 'ProfileController@destroy');
     
-    Route::get('users/{user_id}/playlist', 'UserController@findOrCreatePlaylist');
+    Route::get('user', 'UserController@getAuthenticatedUser');
 
     Route::get('videos', 'VideoController@index');
     Route::post('videos', 'VideoController@store');
