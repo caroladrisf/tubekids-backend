@@ -22,17 +22,13 @@ class VideoController extends Controller
     public function index(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        
+        $playlist = Playlist::firstOrCreate(['user_id' => $user->id], ['name' => 'General']);
+
         if ($request->query('name')) {
             $name = '%' . $request->query('name') . '%';
-
-            $playlist = Playlist::where('user_id', '=', $user->id)->get();
-            foreach ($playlist as $p) {
-                $p->videos = Video::where('playlist_id', $p->id)->where('name', 'ilike', $name)->get();
-            }
-
+            $playlist->videos = Video::where('playlist_id', $playlist->id)->where('name', 'ilike', $name)->get();
         } else {
-            $playlist = Playlist::where('user_id', '=', $user->id)->with('videos')->get();
+            $playlist->videos = Playlist::find($playlist->id)->videos;
         }
         
         return response()->json(compact('playlist'), 200);
@@ -58,7 +54,9 @@ class VideoController extends Controller
             if (! Str::startsWith($request->input('url'), 'https://www.youtube.com/watch')) {
                 return response()->json(['error' => 'The url is not accepted'], 400);
             }
-            $video = $playlist->videos()->create($request->all());
+            $video = new Video($request->except('url'));
+            $video->url = Str::replaceFirst('watch?v=', 'embed/', $request->input('url'));
+            $playlist->videos()->save($video);
             
         } else if ($request->input('type') === 'Uploaded Video') {
             
@@ -110,7 +108,8 @@ class VideoController extends Controller
             $video->fill(['url' => $url]);
             $video->fill($request->except('url'));
         } else {
-            $video->fill($request->all());
+            $video->url = Str::replaceFirst('watch?v=', 'embed/', $request->input('url'));
+            $video->fill($request->except('url'));
         }
 
         if ($video->save()) {

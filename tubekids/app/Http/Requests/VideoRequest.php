@@ -27,7 +27,7 @@ class VideoRequest extends FormRequest
             'name' => 'required',
             'type' => 'required|in:Youtube Video,Uploaded Video',
             'url'  => 'required_if:type,Youtube Video|url',
-            'file' => 'required_if:type,Uploaded Video|mimetypes:video/*'
+            /* 'file' => 'required_if:type,Uploaded Video|mimetypes:video/*' */
         ];
     }
 }
