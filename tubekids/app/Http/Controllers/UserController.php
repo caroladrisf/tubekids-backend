@@ -43,7 +43,7 @@ class UserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendSMS(User $user)
+    public function sendSMS(Request $request, User $user)
     {
         if (! $user) {
             return response()->json(['error'=>'User not found'], 404);

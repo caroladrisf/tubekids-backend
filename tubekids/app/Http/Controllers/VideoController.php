@@ -62,7 +62,7 @@ class VideoController extends Controller
             
             $url = Storage::disk('public')->put('uploads/'.$playlist->id, $request->file('file'));
             $video = new Video($request->except('url'));
-            $video->url = $url;
+            $video->url = storage_path('app') . '/public/' . $url;
             $playlist->videos()->save($video);
             
         }
@@ -105,7 +105,7 @@ class VideoController extends Controller
                 Storage::disk('public')->delete($video->url);
             }
             $url = Storage::disk('public')->put('uploads/'.$playlist->id, $request->file('file'));
-            $video->fill(['url' => $url]);
+            $video->fill(['url' => storage_path('app') . '/public/' . $url]);
             $video->fill($request->except('url'));
         } else {
             $video->url = Str::replaceFirst('watch?v=', 'embed/', $request->input('url'));
