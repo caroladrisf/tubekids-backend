@@ -46,13 +46,14 @@ class VideoController extends Controller
         $playlist = User::find($user->id)->playlist;
 
         if (! $playlist) {
-            return response()->json(['error' => 'Playlist not found'], 404);
+            return response()->json(['errors' => 'Playlist not found'], 404);
         }
 
         if ($request->input('type') === 'Youtube Video') {
             
             if (! Str::startsWith($request->input('url'), 'https://www.youtube.com/watch')) {
-                return response()->json(['error' => 'The url is not accepted'], 400);
+                $errors = ['url' => ['The url is not accepted']];
+                return response()->json(compact('errors'), 400);
             }
             $video = new Video($request->except('url'));
             $video->url = Str::replaceFirst('watch?v=', 'embed/', $request->input('url'));
